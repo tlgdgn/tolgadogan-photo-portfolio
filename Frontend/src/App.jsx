@@ -45,7 +45,10 @@ function App() {
         // --- LOCAL DEVELOPMENT MODE ---
         const localPhotos = PHOTO_ORDER.map(name => ({
           name,
-          url: `/dev_photos/${name}`
+          url: `/dev_photos/${name}`,
+          thumbUrl: name.includes('banner') || name.includes('profile') 
+            ? `/dev_photos/${name}` 
+            : `/dev_photos/thumbnails/${name}`
         }))
         setAllPhotos(localPhotos)
         setLoading(false)
@@ -56,8 +59,24 @@ function App() {
           const result = await listAll(storageRef)
           
           const urlPromises = result.items.map(async (item) => {
-            const url = await getDownloadURL(item)
-            return { name: item.name, url: url }
+            const originalUrl = await getDownloadURL(item)
+            let thumbUrl = originalUrl // Fallback
+
+            // Sadece gallery fotoğrafları için thumbnail dene (banner/profile hariç)
+            if (!item.name.toLowerCase().includes('banner') && !item.name.toLowerCase().includes('profile')) {
+              try {
+                const thumbRef = ref(storage, `thumbnails/${item.name}`)
+                thumbUrl = await getDownloadURL(thumbRef)
+              } catch (e) {
+                console.warn(`Thumbnail not found for ${item.name}, using original.`)
+              }
+            }
+
+            return { 
+              name: item.name, 
+              url: originalUrl, 
+              thumbUrl: thumbUrl 
+            }
           })
 
           const photoData = await Promise.all(urlPromises)
@@ -66,12 +85,9 @@ function App() {
           photoData.sort((a, b) => {
             const indexA = PHOTO_ORDER.indexOf(a.name)
             const indexB = PHOTO_ORDER.indexOf(b.name)
-            
-            // Eğer listede yoksa en sona at
             if (indexA === -1 && indexB === -1) return a.name.localeCompare(b.name)
             if (indexA === -1) return 1
             if (indexB === -1) return -1
-            
             return indexA - indexB
           })
           
@@ -87,11 +103,15 @@ function App() {
     fetchPhotos()
   }, [])
 
+  const [isMobile, setIsMobile] = useState(false)
+
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 600) {
+      const width = window.innerWidth
+      setIsMobile(width <= 768)
+      if (width <= 600) {
         setColumnsCount(2)
-      } else if (window.innerWidth <= 1024) {
+      } else if (width <= 1024) {
         setColumnsCount(2)
       } else {
         setColumnsCount(3)
@@ -179,9 +199,13 @@ function App() {
                 key={photo.originalIndex}
                 className="photo-item"
                 style={{ animationDelay: `${(photo.originalIndex % PHOTOS_PER_PAGE) * 0.1}s` }}
-                onClick={() => openFullscreen(photo.url)}
+                onClick={() => openFullscreen(photo.url)} // Tıklandığında her zaman orijinal URL
               >
-                <img src={photo.url} alt={photo.name} loading="lazy" />
+                <img 
+                  src={isMobile ? photo.thumbUrl : photo.url} // Mobilde thumbnail, masaüstünde orijinal
+                  alt={photo.name} 
+                  loading="lazy" 
+                />
               </div>
             ))}
           </div>
