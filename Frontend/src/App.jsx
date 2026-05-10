@@ -5,6 +5,31 @@ import { storage } from './firebase'
 const PHOTOS_PER_PAGE = 6
 const IS_DEV = import.meta.env.DEV
 
+// --- ÖZEL SIRALAMA LİSTESİ ---
+const PHOTO_ORDER = [
+  'samplePhoto44.jpg', 'samplePhoto68.jpg', 'samplePhoto76.jpg', 'samplePhoto81.jpg',
+  'samplePhoto72.jpg', 'samplePhoto80.jpg', 'samplePhoto78.jpg', 'samplePhoto17.jpg',
+  'samplePhoto3.jpg', 'samplePhoto52.jpg', 'samplePhoto43.jpg', 'samplePhoto11.jpg',
+  'samplePhoto7.jpg', 'samplePhoto59.jpg', 'samplePhoto48.jpg', 'samplePhoto51.jpg',
+  'samplePhoto57.jpg', 'samplePhoto41.jpg', 'samplePhoto37.jpg', 'samplePhoto38.jpg',
+  'samplePhoto36.jpg', 'samplePhoto33.jpg', 'samplePhoto31.jpg', 'samplePhoto32.jpg',
+  'samplePhoto28.jpg', 'samplePhoto24.jpg', 'samplePhoto21.jpg', 'samplePhoto1.jpg',
+  'samplePhoto2.jpg', 'samplePhoto4.jpg', 'samplePhoto5.jpg', 'samplePhoto6.jpg',
+  'samplePhoto8.jpg', 'samplePhoto9.jpg', 'samplePhoto10.jpg', 'samplePhoto12.jpg',
+  'samplePhoto13.jpg', 'samplePhoto14.jpg', 'samplePhoto15.jpg', 'samplePhoto16.jpg',
+  'samplePhoto18.jpg', 'samplePhoto19.jpg', 'samplePhoto20.jpg', 'samplePhoto22.jpg',
+  'samplePhoto23.jpg', 'samplePhoto25.jpg', 'samplePhoto26.jpg', 'samplePhoto27.jpg',
+  'samplePhoto29.jpg', 'samplePhoto30.jpg', 'samplePhoto34.jpg', 'samplePhoto35.jpg',
+  'samplePhoto39.jpg', 'samplePhoto40.jpg', 'samplePhoto42.jpg', 'samplePhoto45.jpg',
+  'samplePhoto46.jpg', 'samplePhoto47.jpg', 'samplePhoto48.jpg', 'samplePhoto49.jpg',
+  'samplePhoto50.jpg', 'samplePhoto53.jpg', 'samplePhoto54.jpg', 'samplePhoto55.jpg',
+  'samplePhoto56.jpg', 'samplePhoto58.jpg', 'samplePhoto60.jpg', 'samplePhoto61.jpg',
+  'samplePhoto62.jpg', 'samplePhoto63.jpg', 'samplePhoto64.jpg', 'samplePhoto65.jpg',
+  'samplePhoto66.jpg', 'samplePhoto67.jpg', 'samplePhoto69.jpg', 'samplePhoto70.jpg',
+  'samplePhoto71.jpg', 'samplePhoto73.jpg', 'samplePhoto74.jpg', 'samplePhoto75.jpg',
+  'samplePhoto77.jpg', 'samplePhoto79.jpg', 'banner.jpg', 'profilePhoto.jpg'
+]
+
 function App() {
   const [allPhotos, setAllPhotos] = useState([])
   const [loading, setLoading] = useState(true)
@@ -18,93 +43,10 @@ function App() {
     const fetchPhotos = async () => {
       if (IS_DEV) {
         // --- LOCAL DEVELOPMENT MODE ---
-        // Local path: /public/dev_photos/ (You should place your test photos here)
-        const localPhotos = [
-          { name: 'samplePhoto44.jpg', url: '/dev_photos/samplePhoto44.jpg' },
-          { name: 'samplePhoto68.jpg', url: '/dev_photos/samplePhoto68.jpg' },
-          { name: 'samplePhoto76.jpg', url: '/dev_photos/samplePhoto76.jpg' },
-          { name: 'samplePhoto81.jpg', url: '/dev_photos/samplePhoto81.jpg' },
-          { name: 'samplePhoto72.jpg', url: '/dev_photos/samplePhoto72.jpg' },
-          { name: 'samplePhoto80.jpg', url: '/dev_photos/samplePhoto80.jpg' },
-          { name: 'samplePhoto78.jpg', url: '/dev_photos/samplePhoto78.jpg' },
-          { name: 'samplePhoto17.jpg', url: '/dev_photos/samplePhoto17.jpg' },
-          { name: 'samplePhoto3.jpg', url: '/dev_photos/samplePhoto3.jpg' },
-          { name: 'samplePhoto52.jpg', url: '/dev_photos/samplePhoto52.jpg' },
-          { name: 'samplePhoto43.jpg', url: '/dev_photos/samplePhoto43.jpg' },
-          { name: 'samplePhoto11.jpg', url: '/dev_photos/samplePhoto11.jpg' },
-          { name: 'samplePhoto7.jpg', url: '/dev_photos/samplePhoto7.jpg' },
-          { name: 'samplePhoto59.jpg', url: '/dev_photos/samplePhoto59.jpg' },
-          { name: 'samplePhoto48.jpg', url: '/dev_photos/samplePhoto48.jpg' },
-          { name: 'samplePhoto51.jpg', url: '/dev_photos/samplePhoto51.jpg' },
-          { name: 'samplePhoto57.jpg', url: '/dev_photos/samplePhoto57.jpg' },
-          { name: 'samplePhoto41.jpg', url: '/dev_photos/samplePhoto41.jpg' },
-          { name: 'samplePhoto37.jpg', url: '/dev_photos/samplePhoto37.jpg' },
-          { name: 'samplePhoto38.jpg', url: '/dev_photos/samplePhoto38.jpg' },
-          { name: 'samplePhoto36.jpg', url: '/dev_photos/samplePhoto36.jpg' },
-          { name: 'samplePhoto33.jpg', url: '/dev_photos/samplePhoto33.jpg' },
-          { name: 'samplePhoto31.jpg', url: '/dev_photos/samplePhoto31.jpg' },
-          { name: 'samplePhoto32.jpg', url: '/dev_photos/samplePhoto32.jpg' },
-          { name: 'samplePhoto28.jpg', url: '/dev_photos/samplePhoto28.jpg' },
-          { name: 'samplePhoto24.jpg', url: '/dev_photos/samplePhoto24.jpg' },
-          { name: 'samplePhoto21.jpg', url: '/dev_photos/samplePhoto21.jpg' },
-          { name: 'samplePhoto1.jpg', url: '/dev_photos/samplePhoto1.jpg' },
-          { name: 'samplePhoto2.jpg', url: '/dev_photos/samplePhoto2.jpg' },
-          { name: 'samplePhoto4.jpg', url: '/dev_photos/samplePhoto4.jpg' },
-          { name: 'samplePhoto5.jpg', url: '/dev_photos/samplePhoto5.jpg' },
-          { name: 'samplePhoto6.jpg', url: '/dev_photos/samplePhoto6.jpg' },
-          { name: 'samplePhoto8.jpg', url: '/dev_photos/samplePhoto8.jpg' },
-          { name: 'samplePhoto9.jpg', url: '/dev_photos/samplePhoto9.jpg' },
-          { name: 'samplePhoto10.jpg', url: '/dev_photos/samplePhoto10.jpg' },
-          { name: 'samplePhoto12.jpg', url: '/dev_photos/samplePhoto12.jpg' },
-          { name: 'samplePhoto13.jpg', url: '/dev_photos/samplePhoto13.jpg' },
-          { name: 'samplePhoto14.jpg', url: '/dev_photos/samplePhoto14.jpg' },
-          { name: 'samplePhoto15.jpg', url: '/dev_photos/samplePhoto15.jpg' },
-          { name: 'samplePhoto16.jpg', url: '/dev_photos/samplePhoto16.jpg' },
-          { name: 'samplePhoto18.jpg', url: '/dev_photos/samplePhoto18.jpg' },
-          { name: 'samplePhoto19.jpg', url: '/dev_photos/samplePhoto19.jpg' },
-          { name: 'samplePhoto20.jpg', url: '/dev_photos/samplePhoto20.jpg' },
-          { name: 'samplePhoto22.jpg', url: '/dev_photos/samplePhoto22.jpg' },
-          { name: 'samplePhoto23.jpg', url: '/dev_photos/samplePhoto23.jpg' },
-          { name: 'samplePhoto25.jpg', url: '/dev_photos/samplePhoto25.jpg' },
-          { name: 'samplePhoto26.jpg', url: '/dev_photos/samplePhoto26.jpg' },
-          { name: 'samplePhoto27.jpg', url: '/dev_photos/samplePhoto27.jpg' },
-          { name: 'samplePhoto29.jpg', url: '/dev_photos/samplePhoto29.jpg' },
-          { name: 'samplePhoto30.jpg', url: '/dev_photos/samplePhoto30.jpg' },
-          { name: 'samplePhoto34.jpg', url: '/dev_photos/samplePhoto34.jpg' },
-          { name: 'samplePhoto35.jpg', url: '/dev_photos/samplePhoto35.jpg' },
-          { name: 'samplePhoto39.jpg', url: '/dev_photos/samplePhoto39.jpg' },
-          { name: 'samplePhoto40.jpg', url: '/dev_photos/samplePhoto40.jpg' },
-          { name: 'samplePhoto42.jpg', url: '/dev_photos/samplePhoto42.jpg' },
-          { name: 'samplePhoto45.jpg', url: '/dev_photos/samplePhoto45.jpg' },
-          { name: 'samplePhoto46.jpg', url: '/dev_photos/samplePhoto46.jpg' },
-          { name: 'samplePhoto47.jpg', url: '/dev_photos/samplePhoto47.jpg' },
-          { name: 'samplePhoto48.jpg', url: '/dev_photos/samplePhoto48.jpg' },
-          { name: 'samplePhoto49.jpg', url: '/dev_photos/samplePhoto49.jpg' },
-          { name: 'samplePhoto50.jpg', url: '/dev_photos/samplePhoto50.jpg' },
-          { name: 'samplePhoto53.jpg', url: '/dev_photos/samplePhoto53.jpg' },
-          { name: 'samplePhoto54.jpg', url: '/dev_photos/samplePhoto54.jpg' },
-          { name: 'samplePhoto55.jpg', url: '/dev_photos/samplePhoto55.jpg' },
-          { name: 'samplePhoto56.jpg', url: '/dev_photos/samplePhoto56.jpg' },
-          { name: 'samplePhoto58.jpg', url: '/dev_photos/samplePhoto58.jpg' },
-          { name: 'samplePhoto60.jpg', url: '/dev_photos/samplePhoto60.jpg' },
-          { name: 'samplePhoto61.jpg', url: '/dev_photos/samplePhoto61.jpg' },
-          { name: 'samplePhoto62.jpg', url: '/dev_photos/samplePhoto62.jpg' },
-          { name: 'samplePhoto63.jpg', url: '/dev_photos/samplePhoto63.jpg' },
-          { name: 'samplePhoto64.jpg', url: '/dev_photos/samplePhoto64.jpg' },
-          { name: 'samplePhoto65.jpg', url: '/dev_photos/samplePhoto65.jpg' },
-          { name: 'samplePhoto66.jpg', url: '/dev_photos/samplePhoto66.jpg' },
-          { name: 'samplePhoto67.jpg', url: '/dev_photos/samplePhoto67.jpg' },
-          { name: 'samplePhoto69.jpg', url: '/dev_photos/samplePhoto69.jpg' },
-          { name: 'samplePhoto70.jpg', url: '/dev_photos/samplePhoto70.jpg' },
-          { name: 'samplePhoto71.jpg', url: '/dev_photos/samplePhoto71.jpg' },
-          { name: 'samplePhoto73.jpg', url: '/dev_photos/samplePhoto73.jpg' },
-          { name: 'samplePhoto74.jpg', url: '/dev_photos/samplePhoto74.jpg' },
-          { name: 'samplePhoto75.jpg', url: '/dev_photos/samplePhoto75.jpg' },
-          { name: 'samplePhoto77.jpg', url: '/dev_photos/samplePhoto77.jpg' },
-          { name: 'samplePhoto79.jpg', url: '/dev_photos/samplePhoto79.jpg' },
-          { name: 'banner.jpg', url: '/dev_photos/banner.jpg' },
-          { name: 'profilePhoto.jpg', url: '/dev_photos/profilePhoto.jpg' },
-        ]
+        const localPhotos = PHOTO_ORDER.map(name => ({
+          name,
+          url: `/dev_photos/${name}`
+        }))
         setAllPhotos(localPhotos)
         setLoading(false)
       } else {
@@ -119,7 +61,19 @@ function App() {
           })
 
           const photoData = await Promise.all(urlPromises)
-          photoData.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+          
+          // --- ÖZEL SIRALAMA MANTIĞI ---
+          photoData.sort((a, b) => {
+            const indexA = PHOTO_ORDER.indexOf(a.name)
+            const indexB = PHOTO_ORDER.indexOf(b.name)
+            
+            // Eğer listede yoksa en sona at
+            if (indexA === -1 && indexB === -1) return a.name.localeCompare(b.name)
+            if (indexA === -1) return 1
+            if (indexB === -1) return -1
+            
+            return indexA - indexB
+          })
           
           setAllPhotos(photoData)
         } catch (error) {
